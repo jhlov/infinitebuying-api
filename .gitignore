@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# 패키지 폴더
+python/
+
+# 파이참 폴더
+.idea/
