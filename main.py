@@ -139,7 +139,15 @@ def run(params: dict):
 
     end_date = datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days=365)
     end_date = end_date.strftime('%Y-%m-%d')
-    df = fdr.DataReader(stock, start_date, end_date)
+    try:
+        df = fdr.DataReader(stock, start_date, end_date)
+    except:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({
+                'message': '잘못된 요청입니다.',
+            })
+        }
 
     step: int = 0  # 회차
     days: int = 0  # 일자
@@ -281,4 +289,5 @@ _params = {
 }
 
 # run('TQQQ', '2020-01-01')
-run(_params)
+r = run(_params)
+print(r)
