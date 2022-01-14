@@ -23,6 +23,7 @@ def get_rsi(params: dict):
         else:
             url = 'https://infinite-buying-default-rtdb.firebaseio.com/rsi_daily/{0}.json'.format(date)
     else:
+        # 가장 최근
         url = 'https://infinite-buying-default-rtdb.firebaseio.com/rsi_daily.json?orderBy="$key"&limitToLast=1'
 
     r = requests.get(url)
@@ -44,11 +45,21 @@ def get_rsi(params: dict):
             })
         }
     elif len(data.keys()) == 1:
+        # 이전, 이후
         key = list(data.keys())[0]
         value = data[key]
     else:
+        # 날짜를 지정 했을 때
         key = date
         value = data
+
+    # 1년전 데이터 불러오기
+    last_year_date = (datetime.strptime(key, '%Y-%m-%d') - timedelta(days=365)).strftime('%Y-%m-%d')
+    url = 'https://infinite-buying-default-rtdb.firebaseio.com/rsi_daily.json?orderBy="$key"&endAt="{0}"&limitToLast=1'.format(last_year_date)
+    r = requests.get(url)
+    last_year_data = json.loads(r.text)
+    if r.status_code == 200 and last_year_data:
+        last_year_data = list(last_year_data.values())[0]
     
     data = []
     for k, v in value.items():
@@ -60,6 +71,8 @@ def get_rsi(params: dict):
         del(v['low'])
         del(v['open'])
         del(v['prev_date'])
+        if k in last_year_data:
+            v['last_year_close'] = last_year_data[k]['close']
         data.append(v)
     
     return {
@@ -71,7 +84,7 @@ def get_rsi(params: dict):
     }
 
 params = {
-    'date': '2021-11-20',
+    'date': '2021-11-22',
     # 'prev': 'false',
 }
 
