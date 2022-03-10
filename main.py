@@ -1,8 +1,10 @@
 import json
-import math
 from datetime import datetime, timedelta
 
-import FinanceDataReader as fdr
+import yfinance as yf
+from pandas_datareader import data as pdr
+
+yf.pdr_override()
 
 
 def can_sell(order_type: str, price_type: str, rate: float, avg_price: float, yesterday_close: float, high: float,
@@ -140,7 +142,8 @@ def run(params: dict):
     end_date = datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days=365)
     end_date = end_date.strftime('%Y-%m-%d')
     try:
-        df = fdr.DataReader(stock, start_date, end_date)
+        # df = fdr.DataReader(stock, start_date, end_date)
+        df = pdr.get_data_yahoo(stock, start=start_date, end=end_date)
     except:
         return {
             'statusCode': 400,
