@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # 패키지 폴더
-python/
+python*/
 
 # 파이참 폴더
 .idea/
